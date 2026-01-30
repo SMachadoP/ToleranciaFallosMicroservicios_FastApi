@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # === NGINX API Gateway ===
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - reservation-service
+    networks:
+      - tickets-network
+
+  # === Databases ===
+  postgres-reservations:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: reservations
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    networks:
+      - tickets-network
+
+  postgres-inventory:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: inventory
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    networks:
+      - tickets-network
+
+  # === Microservices ===
+  reservation-service:
+    build: ./reservation-service
+    environment:
+      DATABASE_URL: postgresql://admin:admin123@postgres-reservations:5432/reservations
+      INVENTORY_URL: http://inventory-service:8000
+      PAYMENT_URL: http://payment-service:8000
+      NOTIFICATION_URL: http://notification-service:8000
+    depends_on:
+      - postgres-reservations
+      - inventory-service
+      - payment-service
+      - notification-service
+    networks:
+      - tickets-network
+
+  inventory-service:
+    build: ./inventory-service
+    ports:
+      - "8082:8000"
+    environment:
+      DATABASE_URL: postgresql://admin:admin123@postgres-inventory:5432/inventory
+    depends_on:
+      - postgres-inventory
+    networks:
+      - tickets-network
+
+  payment-service:
+    build: ./payment-service
+    ports:
+      - "8083:8000"
+    networks:
+      - tickets-network
+
+  notification-service:
+    build: ./notification-service
+    ports:
+      - "8084:8000"
+    networks:
+      - tickets-network
+
+networks:
+  tickets-network:
+    driver: bridge

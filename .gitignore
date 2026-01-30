@@ -1,0 +1,12 @@
+# Ignore docs folder (only for report, not for repo)
+docs/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+
+# IDE
+.vscode/
+.idea/
