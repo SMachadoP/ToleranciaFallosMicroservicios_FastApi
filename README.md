@@ -1,14 +1,4 @@
-# Sistema de Reservas de Entradas - FastAPI Version
-
-Sistema de microservicios con FastAPI para demostrar patrones de resiliencia.
-
-## Comparación con Spring Boot
-
-| Aspecto | Spring Boot | FastAPI |
-|---------|-------------|---------|
-| **Archivos por servicio** | ~5-7 | **2** (main.py + requirements.txt) |
-| **Tiempo de build** | ~3-5 min | **~30 seg** |
-| **Imagen Docker** | ~300MB | **~150MB** |
+# Sistema de Reservas de Entradas - Tolerancia a Fallos en Sistemas Distribuidos
 
 ## Arquitectura
 
@@ -46,7 +36,7 @@ cd TolerenciaFallosFastApi
 docker-compose up --build
 ```
 
-Esperar ~30 segundos. Cuando veas `Uvicorn running` está listo.
+Esperar hasta ver `Uvicorn running` está listo.
 
 ---
 
